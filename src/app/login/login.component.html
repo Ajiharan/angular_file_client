@@ -1,0 +1,56 @@
+<div class="wrapper">
+  <div *ngIf="loading" class="card"></div>
+  <form
+    *ngIf="!loading"
+    class="form-signin"
+    [formGroup]="loginForm"
+    (ngSubmit)="submitForm()"
+  >
+    <h3 class="form-signin-heading">ACCOUNT LOGIN</h3>
+    <p class="text-danger">{{ errorMsg }}</p>
+    <input
+      type="text"
+      class="form-control"
+      placeholder="username"
+      formControlName="userName"
+    />
+    <p
+      class="text-danger"
+      [hidden]="
+        !(
+          loginForm.controls['userName'].hasError('required') &&
+          !loginForm.controls['userName'].pristine
+        )
+      "
+    >
+      *username is required.
+    </p>
+    <input
+      type="password"
+      class="form-control"
+      formControlName="password"
+      placeholder="Password"
+    />
+    <p
+      class="text-danger"
+      [hidden]="
+        !(
+          loginForm.controls['password'].hasError('required') &&
+          !loginForm.controls['password'].pristine
+        )
+      "
+    >
+      *password is required.
+    </p>
+
+    <div class="d-grid gap-2 p-4">
+      <button
+        class="btn btn-lg btn-primary"
+        [disabled]="loginForm.invalid"
+        type="submit"
+      >
+        Login
+      </button>
+    </div>
+  </form>
+</div>

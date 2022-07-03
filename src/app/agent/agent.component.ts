@@ -14,12 +14,14 @@ export class AgentComponent implements OnInit {
   ngOnInit(): void {
     this.service.getFiles().subscribe({
       next: (res) => {
-        console.log(res);
         this.fileData = res;
       },
       error: (err) => {
         console.log(err);
       },
     });
+  }
+  onSave(url: string, fileName: string): void {
+    window.open(url);
   }
 }

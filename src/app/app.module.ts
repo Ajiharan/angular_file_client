@@ -12,9 +12,10 @@ import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
 import { PublisherComponent } from './publisher/publisher.component';
 import { AgentComponent } from './agent/agent.component';
+import { LoginComponent } from './login/login.component';
 
 @NgModule({
-  declarations: [AppComponent, PublisherComponent, AgentComponent],
+  declarations: [AppComponent, PublisherComponent, AgentComponent, LoginComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

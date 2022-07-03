@@ -15,6 +15,7 @@ import {
   getDownloadURL,
 } from '@angular/fire/storage';
 import { FileService } from '../service/file.service';
+
 @Component({
   selector: 'app-publisher',
   templateUrl: './publisher.component.html',
@@ -53,7 +54,6 @@ export class PublisherComponent {
   validateFile(message: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
       const valid = control.value.match(/\w\.(doc|pdf)$/g);
-      console.log('valid', valid);
       if (valid) return null;
       return { inValid: message };
     };
@@ -62,14 +62,12 @@ export class PublisherComponent {
   selectImage(event: any) {
     if (event.target.files.length > 0) {
       const file = event.target.files[0];
-
       this.uploadForm.get('fileName')?.setValue(file.name);
       this.file = file;
     }
   }
 
   onSubmit() {
-    console.log('submit');
     const formdata = new FormData();
 
     formdata.append('fileName', this.uploadForm.value.fileName);
@@ -86,25 +84,15 @@ export class PublisherComponent {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         console.log('Upload is ' + progress + '% done');
-        switch (snapshot.state) {
-          case 'paused':
-            console.log('Upload is paused');
-            break;
-          case 'running':
-            console.log('Upload is running');
-            break;
-        }
       },
       (error) => {
         console.log('error', error);
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-          console.log('File available at', downloadURL);
           formdata.append('url', downloadURL);
           this.service.postFile(formdata).subscribe({
             next: (res) => {
-              console.log(res);
               this.singleInput.nativeElement.value = '';
               this.displaySingleImage = true;
               this.displaySingleImageArray.push(res.path);

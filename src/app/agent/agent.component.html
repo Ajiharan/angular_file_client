@@ -16,13 +16,12 @@
         <td>{{ file.description }}</td>
         <td>{{ file.price }}</td>
         <td>
-          <a
+          <button
             class="btn btn-link"
-            [download]="file.fileName"
-            [href]="file.fileUrl"
+            (click)="onSave(file.fileUrl, file.fileName)"
           >
             download
-          </a>
+          </button>
         </td>
       </tr>
     </tbody>
