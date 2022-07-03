@@ -8,3 +8,12 @@ export class FileUpload {
     this.file = file;
   }
 }
+
+export type Publisher = {
+  id: string;
+  fileName: string;
+  authorName: string;
+  description: string;
+  fileUrl: string;
+  price: string;
+};

@@ -11,9 +11,10 @@ import { provideStorage, getStorage } from '@angular/fire/storage';
 import { provideFirestore, getFirestore } from '@angular/fire/firestore';
 import { environment } from '../environments/environment';
 import { PublisherComponent } from './publisher/publisher.component';
+import { AgentComponent } from './agent/agent.component';
 
 @NgModule({
-  declarations: [AppComponent, PublisherComponent],
+  declarations: [AppComponent, PublisherComponent, AgentComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

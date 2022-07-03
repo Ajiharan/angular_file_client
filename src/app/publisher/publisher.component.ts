@@ -7,13 +7,14 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { PublisherService } from '../publisher.service';
+
 import {
   Storage,
   ref,
   uploadBytesResumable,
   getDownloadURL,
 } from '@angular/fire/storage';
+import { FileService } from '../service/file.service';
 @Component({
   selector: 'app-publisher',
   templateUrl: './publisher.component.html',
@@ -43,7 +44,7 @@ export class PublisherComponent {
     ]),
   });
 
-  constructor(private service: PublisherService, private storage: Storage) {
+  constructor(private service: FileService, private storage: Storage) {
     this.displaySingleImage = false;
 
     this.displaySingleImageArray = [];
