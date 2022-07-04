@@ -33,10 +33,12 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.errorMsg = '';
     this.service.loginUser(this.loginForm.value).subscribe({
       next: (res) => {
+        this.loading = false;
         this.route.navigate([`/${res}`]);
       },
       error: (err) => {
         this.errorMsg = err;
+        this.loading = false;
       },
     });
   }

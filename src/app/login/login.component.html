@@ -1,4 +1,7 @@
-<div class="wrapper">
+<div *ngIf="loading">
+  <app-spinner></app-spinner>
+</div>
+<div class="wrapper" *ngIf="!loading">
   <div *ngIf="loading" class="card"></div>
   <form
     *ngIf="!loading"

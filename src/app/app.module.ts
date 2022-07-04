@@ -13,9 +13,10 @@ import { environment } from '../environments/environment';
 import { PublisherComponent } from './publisher/publisher.component';
 import { AgentComponent } from './agent/agent.component';
 import { LoginComponent } from './login/login.component';
+import { SpinnerComponent } from './spinner/spinner.component';
 
 @NgModule({
-  declarations: [AppComponent, PublisherComponent, AgentComponent, LoginComponent],
+  declarations: [AppComponent, PublisherComponent, AgentComponent, LoginComponent, SpinnerComponent],
   imports: [
     BrowserModule,
     AppRoutingModule,

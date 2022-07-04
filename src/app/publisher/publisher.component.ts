@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -21,18 +21,14 @@ import { FileService } from '../service/file.service';
   templateUrl: './publisher.component.html',
   styleUrls: ['./publisher.component.scss'],
 })
-export class PublisherComponent {
+export class PublisherComponent implements OnInit {
   title = 'uploadFile';
-
-  displaySingleImage!: Boolean;
-  displayMultipleImages!: Boolean;
-  displayMultipleImageArray!: Array<any>;
-  displaySingleImageArray!: Array<any>;
 
   @ViewChild('singleInput', { static: false })
   singleInput!: ElementRef;
 
   file!: File;
+  public isLoading: boolean = false;
 
   uploadForm: FormGroup = new FormGroup({
     fileName: new FormControl('', Validators.required),
@@ -45,15 +41,13 @@ export class PublisherComponent {
     ]),
   });
 
-  constructor(private service: FileService, private storage: Storage) {
-    this.displaySingleImage = false;
+  constructor(private service: FileService, private storage: Storage) {}
 
-    this.displaySingleImageArray = [];
-  }
+  ngOnInit(): void {}
 
   validateFile(message: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const valid = control.value.match(/\w\.(doc|pdf)$/g);
+      const valid = control.value.match(/\w\.(jpg|pdf)$/g);
       if (valid) return null;
       return { inValid: message };
     };
@@ -69,7 +63,7 @@ export class PublisherComponent {
 
   onSubmit() {
     const formdata = new FormData();
-
+    this.isLoading = true;
     formdata.append('fileName', this.uploadForm.value.fileName);
     formdata.append('authorName', this.uploadForm.value.authorName);
     formdata.append('description', this.uploadForm.value.description);
@@ -83,7 +77,7 @@ export class PublisherComponent {
       (snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log('Upload is ' + progress + '% done');
+        console.log('progress', progress);
       },
       (error) => {
         console.log('error', error);
@@ -93,12 +87,11 @@ export class PublisherComponent {
           formdata.append('url', downloadURL);
           this.service.postFile(formdata).subscribe({
             next: (res) => {
-              this.singleInput.nativeElement.value = '';
-              this.displaySingleImage = true;
-              this.displaySingleImageArray.push(res.path);
+              this.isLoading = false;
             },
             error: (err) => {
               console.log(err);
+              this.isLoading = false;
             },
           });
         });

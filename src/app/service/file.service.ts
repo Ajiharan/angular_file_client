@@ -10,6 +10,7 @@ export class FileService {
   constructor(private http: HttpClient) {}
 
   postFile(data: any): Observable<any> {
+    console.log('data', data);
     return this.http.post<any>(this.baseUrl, data);
   }
 
