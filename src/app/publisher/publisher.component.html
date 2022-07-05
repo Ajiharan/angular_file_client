@@ -1,6 +1,3 @@
-<!-- <div *ngIf="isLoading">
-  <app-spinner></app-spinner>
-</div> -->
 <div class="p-4">
   <h1 style="text-align: center">Publisher's Link File Upload</h1>
 
@@ -121,6 +118,13 @@
         >
           Upload
         </button>
+        <div class="progress mt-4">
+          <div
+            class="progress-bar progress-bar-striped bg-danger"
+            role="progressbar"
+            [style.width.%]="process"
+          ></div>
+        </div>
       </div>
     </form>
   </div>

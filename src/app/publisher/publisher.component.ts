@@ -1,4 +1,11 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  OnInit,
+  ViewChild,
+} from '@angular/core';
 import {
   AbstractControl,
   FormControl,
@@ -15,14 +22,19 @@ import {
   getDownloadURL,
 } from '@angular/fire/storage';
 import { FileService } from '../service/file.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-publisher',
   templateUrl: './publisher.component.html',
   styleUrls: ['./publisher.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PublisherComponent implements OnInit {
-  title = 'uploadFile';
+  public title = 'uploadFile';
+  public process: number = 0;
+  private subscription: Subscription;
+  private unsubscribe: any = null;
 
   @ViewChild('singleInput', { static: false })
   singleInput!: ElementRef;
@@ -41,7 +53,13 @@ export class PublisherComponent implements OnInit {
     ]),
   });
 
-  constructor(private service: FileService, private storage: Storage) {}
+  constructor(
+    private service: FileService,
+    private storage: Storage,
+    private cd: ChangeDetectorRef
+  ) {
+    this.subscription = new Subscription();
+  }
 
   ngOnInit(): void {}
 
@@ -61,9 +79,15 @@ export class PublisherComponent implements OnInit {
     }
   }
 
+  onProcess(process: number): void {
+    this.process = process;
+    this.cd.detectChanges();
+    console.log('process', this.process);
+  }
+
   onSubmit() {
     const formdata = new FormData();
-    this.isLoading = true;
+
     formdata.append('fileName', this.uploadForm.value.fileName);
     formdata.append('authorName', this.uploadForm.value.authorName);
     formdata.append('description', this.uploadForm.value.description);
@@ -71,31 +95,45 @@ export class PublisherComponent implements OnInit {
 
     const storageRef = ref(this.storage, this.file.name);
     const uploadTask = uploadBytesResumable(storageRef, this.file);
+    if (this.unsubscribe) {
+      this.unsubscribe();
+    }
 
-    uploadTask.on(
+    this.unsubscribe = uploadTask.on(
       'state_changed',
       (snapshot) => {
         const progress =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        console.log('progress', progress);
+
+        this.onProcess(Math.round(progress));
       },
       (error) => {
         console.log('error', error);
+        this.unsubscribe = null;
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           formdata.append('url', downloadURL);
-          this.service.postFile(formdata).subscribe({
-            next: (res) => {
-              this.isLoading = false;
-            },
-            error: (err) => {
-              console.log(err);
-              this.isLoading = false;
-            },
-          });
+          this.unsubscribe = null;
+
+          this.process = 0;
+          this.cd.detectChanges();
+          this.addFile(formdata);
         });
       }
     );
+  }
+
+  addFile(formdata: FormData): void {
+    this.service.postFile(formdata).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        console.log(res);
+      },
+      error: (err) => {
+        console.log(err);
+        this.isLoading = false;
+      },
+    });
   }
 }
