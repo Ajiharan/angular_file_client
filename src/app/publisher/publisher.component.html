@@ -14,15 +14,7 @@
           formControlName="fileName"
           class="form-control"
         />
-        <p
-          class="text-danger"
-          [hidden]="
-          !(
-            uploadForm.get('fileName')?.errors?.['required']  &&
-            !uploadForm.get('fileName')?.pristine
-          )
-        "
-        >
+        <p class="text-danger" [hidden]="showError('fileName')">
           *fileName is required.
         </p>
       </div>
@@ -33,15 +25,7 @@
           formControlName="authorName"
           class="form-control"
         />
-        <p
-          class="text-danger"
-          [hidden]="
-          !(
-            uploadForm.get('authorName')?.errors?.['required']  &&
-            !uploadForm.get('authorName')?.pristine
-          )
-        "
-        >
+        <p class="text-danger" [hidden]="showError('authorName')">
           *authorName is required.
         </p>
       </div>
@@ -52,15 +36,7 @@
           class="form-control"
           formControlName="description"
         />
-        <p
-          class="text-danger"
-          [hidden]="
-          !(
-            uploadForm.get('description')?.errors?.['required']  &&
-            !uploadForm.get('description')?.pristine
-          )
-        "
-        >
+        <p class="text-danger" [hidden]="showError('description')">
           *description is required.
         </p>
       </div>
@@ -71,15 +47,7 @@
           formControlName="price"
           class="form-control"
         />
-        <p
-          class="text-danger"
-          [hidden]="
-          !(
-            uploadForm.get('price')?.errors?.['required'] &&
-            !uploadForm.get('price')?.pristine
-          )
-        "
-        >
+        <p class="text-danger" [hidden]="showError('price')">
           *price is required.
         </p>
       </div>
@@ -90,15 +58,7 @@
           formControlName="fileInput"
           (change)="selectImage($event)"
         />
-        <p
-          class="text-danger"
-          [hidden]="
-          !(
-            uploadForm.get('fileInput')?.errors?.['required'] &&
-            !uploadForm.get('fileInput')?.pristine
-          )
-        "
-        >
+        <p class="text-danger" [hidden]="showError('fileInput')">
           *File is required.
         </p>
         <p
@@ -118,7 +78,7 @@
         >
           Upload
         </button>
-        <div class="progress mt-4">
+        <div class="progress mt-4" *ngIf="isLoading">
           <div
             class="progress-bar progress-bar-striped bg-danger"
             role="progressbar"
