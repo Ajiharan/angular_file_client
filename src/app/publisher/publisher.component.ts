@@ -2,7 +2,6 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
-  ElementRef,
   OnInit,
   ViewChild,
 } from '@angular/core';
@@ -13,6 +12,7 @@ import {
   ValidationErrors,
   ValidatorFn,
   Validators,
+  NgForm,
 } from '@angular/forms';
 
 import {
@@ -35,9 +35,6 @@ export class PublisherComponent implements OnInit {
   public process: number = 0;
   private subscription: Subscription;
   private unsubscribe: any = null;
-
-  @ViewChild('singleInput', { static: false })
-  singleInput!: ElementRef;
 
   file!: File;
   public isLoading: boolean = false;
@@ -65,7 +62,7 @@ export class PublisherComponent implements OnInit {
 
   validateFile(message: string): ValidatorFn {
     return (control: AbstractControl): ValidationErrors | null => {
-      const valid = control.value.match(/\w\.(jpg|pdf)$/g);
+      const valid = control.value?.match(/\w\.(doc|pdf)$/g);
       if (valid) return null;
       return { inValid: message };
     };
@@ -82,12 +79,11 @@ export class PublisherComponent implements OnInit {
   onProcess(process: number): void {
     this.process = process;
     this.cd.detectChanges();
-    console.log('process', this.process);
   }
 
   onSubmit() {
     const formdata = new FormData();
-
+    this.isLoading = true;
     formdata.append('fileName', this.uploadForm.value.fileName);
     formdata.append('authorName', this.uploadForm.value.authorName);
     formdata.append('description', this.uploadForm.value.description);
@@ -110,13 +106,15 @@ export class PublisherComponent implements OnInit {
       (error) => {
         console.log('error', error);
         this.unsubscribe = null;
+        this.isLoading = false;
       },
       () => {
         getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
           formdata.append('url', downloadURL);
+          this.isLoading = false;
           this.unsubscribe = null;
-
           this.process = 0;
+          this.uploadForm.reset();
           this.cd.detectChanges();
           this.addFile(formdata);
         });
@@ -127,7 +125,6 @@ export class PublisherComponent implements OnInit {
   addFile(formdata: FormData): void {
     this.service.postFile(formdata).subscribe({
       next: (res) => {
-        this.isLoading = false;
         console.log(res);
       },
       error: (err) => {
@@ -135,5 +132,12 @@ export class PublisherComponent implements OnInit {
         this.isLoading = false;
       },
     });
+  }
+
+  showError(controlName: string): boolean {
+    return !(
+      this.uploadForm.get(controlName)?.errors?.['required'] &&
+      !this.uploadForm.get(controlName)?.pristine
+    );
   }
 }
